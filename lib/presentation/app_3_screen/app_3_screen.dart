@@ -51,7 +51,7 @@ class App3ScreenState extends State<App3Screen> {
                   SizedBox(
                       height: 15.v,
                       child: AnimatedSmoothIndicator(
-                          activeIndex: 0,
+                          activeIndex: 2,
                           count: 3,
                           effect: ScrollingDotsEffect(
                               spacing: 8,

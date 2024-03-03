@@ -39,7 +39,7 @@ class StudentHomeScreenPageState extends State<StudentHomeScreenPage> {
                       child: SingleChildScrollView(
                           child: Column(children: [
                     _buildArrowLeft(context),
-                    SizedBox(height: 15.v),
+                    SizedBox(height: 20.v),
                     Align(
                         alignment: Alignment.centerLeft,
                         child: Padding(
@@ -68,19 +68,11 @@ class StudentHomeScreenPageState extends State<StudentHomeScreenPage> {
   /// Section Widget
   Widget _buildArrowLeft(BuildContext context) {
     return Padding(
-        padding: EdgeInsets.only(left: 18.h, right: 21.h),
+        padding: EdgeInsets.only(left: 0.h, right: 21.h),
         child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              CustomImageView(
-                  imagePath: ImageConstant.imgArrowLeft,
-                  height: 20.v,
-                  width: 10.h,
-                  margin: EdgeInsets.only(bottom: 57.v),
-                  onTap: () {
-                    onTapImgArrowLeft(context);
-                  }),
               CustomImageView(
                   imagePath: ImageConstant.imgEllipse1265x66,
                   height: 65.v,

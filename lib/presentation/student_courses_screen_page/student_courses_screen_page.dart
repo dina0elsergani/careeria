@@ -38,24 +38,24 @@ class StudentCoursesScreenPageState extends State<StudentCoursesScreenPage> {
             body: SizedBox(
                 width: double.maxFinite,
                 child: Column(children: [
-                  SizedBox(height: 31.v),
-                  Padding(
-                      padding: EdgeInsets.only(left: 24.h),
-                      child: Selector<StudentCoursesScreenProvider,
-                              TextEditingController?>(
-                          selector: (context, provider) =>
-                              provider.coursesController,
-                          builder: (context, coursesController, child) {
-                            return CustomTextFormField(
-                                width: 67.h,
-                                controller: coursesController,
-                                hintText: "lbl_courses".tr,
-                                textInputAction: TextInputAction.done,
-                                alignment: Alignment.centerLeft,
-                                borderDecoration:
-                                    TextFormFieldStyleHelper.underLinePrimary,
-                                filled: false);
-                          })),
+                  SizedBox(height: 20.v),
+                  // Padding(
+                  //     padding: EdgeInsets.only(left: 24.h),
+                  //     child: Selector<StudentCoursesScreenProvider,
+                  //             TextEditingController?>(
+                  //         selector: (context, provider) =>
+                  //             provider.coursesController,
+                  //         builder: (context, coursesController, child) {
+                  //           return CustomTextFormField(
+                  //               width: 67.h,
+                  //               controller: coursesController,
+                  //               hintText: "lbl_courses".tr,
+                  //               textInputAction: TextInputAction.done,
+                  //               alignment: Alignment.centerLeft,
+                  //               borderDecoration:
+                  //                   TextFormFieldStyleHelper.underLinePrimary,
+                  //               filled: false);
+                  //         })),
                   Divider(color: theme.colorScheme.onPrimaryContainer),
                   SizedBox(height: 20.v),
                   _buildAndroidLargeSeventeen(context)
@@ -66,12 +66,12 @@ class StudentCoursesScreenPageState extends State<StudentCoursesScreenPage> {
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return CustomAppBar(
         leadingWidth: 29.h,
-        leading: AppbarLeadingImage(
-            imagePath: ImageConstant.imgArrowLeft,
-            margin: EdgeInsets.only(left: 19.h, top: 18.v, bottom: 17.v),
-            onTap: () {
-              onTapArrowLeft(context);
-            }),
+        // leading: AppbarLeadingImage(
+        //     imagePath: ImageConstant.imgArrowLeft,
+        //     margin: EdgeInsets.only(left: 19.h, top: 18.v, bottom: 17.v),
+        //     onTap: () {
+        //       onTapArrowLeft(context);
+        //     }),
         centerTitle: true,
         title: AppbarSubtitle(text: "lbl_resources".tr));
   }

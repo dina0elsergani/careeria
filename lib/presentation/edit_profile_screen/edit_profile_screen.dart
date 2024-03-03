@@ -1,6 +1,7 @@
 import 'package:careeria/widgets/app_bar/custom_app_bar.dart';
 import 'package:careeria/widgets/app_bar/appbar_leading_image.dart';
 import 'package:careeria/widgets/app_bar/appbar_subtitle.dart';
+import 'package:careeria/widgets/custom_elevated_button.dart';
 import 'package:careeria/widgets/custom_icon_button.dart';
 import 'package:careeria/widgets/custom_text_form_field.dart';
 import 'package:careeria/core/utils/validation_functions.dart';
@@ -154,6 +155,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                             builder: (context,
                                                 editProfileModelObj, child) {
                                               return CustomDropDown(
+                                                  hasBorder: true,
+                                                  hasContentPadding: true,
                                                   hintText: "lbl_20_5_2002".tr,
                                                   items: editProfileModelObj
                                                           ?.dropdownItemList ??
@@ -258,7 +261,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
   /// Section Widget
   Widget _buildUpdate(BuildContext context) {
-    return CustomOutlinedButton(
+    return CustomElevatedButton(
         text: "lbl_update".tr,
         margin: EdgeInsets.only(left: 16.h, right: 16.h, bottom: 30.v),
         buttonTextStyle: CustomTextStyles.headlineSmallWhiteA700,

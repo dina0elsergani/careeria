@@ -107,12 +107,12 @@ class SettingsScreenPageState extends State<SettingsScreenPage> {
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return CustomAppBar(
         leadingWidth: 34.h,
-        leading: AppbarLeadingImage(
-            imagePath: ImageConstant.imgArrowLeft,
-            margin: EdgeInsets.only(left: 24.h, top: 14.v, bottom: 21.v),
-            onTap: () {
-              onTapArrowLeft(context);
-            }),
+        // leading: AppbarLeadingImage(
+        //     imagePath: ImageConstant.imgArrowLeft,
+        //     margin: EdgeInsets.only(left: 24.h, top: 14.v, bottom: 21.v),
+        //     onTap: () {
+        //       onTapArrowLeft(context);
+        //     }),
         centerTitle: true,
         title: AppbarSubtitle(text: "lbl_settings".tr));
   }
@@ -188,43 +188,31 @@ class SettingsScreenPageState extends State<SettingsScreenPage> {
                 ])));
   }
 
-  /// Section Widget
   Widget _buildLocation(BuildContext context) {
-    return Align(
-        alignment: Alignment.centerRight,
-        child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.only(left: 32.h),
-            child: IntrinsicWidth(
-                child:
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+     return Padding(
+        padding: EdgeInsets.only(left: 32.h, right: 51.h),
+        child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
               CustomImageView(
                   imagePath: ImageConstant.imgLocation,
-                  height: 26.v,
-                  width: 24.h),
+                  height: 23.v,
+                  width: 24.h,
+                  margin: EdgeInsets.only(bottom: 2.v)),
               Padding(
-                  padding: EdgeInsets.only(left: 23.h, top: 2.v),
+                  padding: EdgeInsets.only(left: 20.h),
                   child: Text("msg_privacy_security".tr,
-                      style: CustomTextStyles.titleMediumBeVietnam)),
-              Spacer(flex: 58),
-              CustomIconButton(
-                  height: 24.adaptSize,
-                  width: 24.adaptSize,
-                  padding: EdgeInsets.all(3.h),
-                  child:
-                      CustomImageView(imagePath: ImageConstant.imgArrowRight)),
-              Spacer(flex: 41),
-              Padding(
-                  padding: EdgeInsets.only(bottom: 2.v),
-                  child: CustomIconButton(
-                      height: 24.adaptSize,
-                      width: 24.adaptSize,
-                      padding: EdgeInsets.all(3.h),
-                      child: CustomImageView(
-                          imagePath: ImageConstant.imgArrowRight)))
-            ]))));
+                      style: CustomTextStyles
+                          .titleMediumBeVietnam)),
+              Spacer(),
+              CustomImageView(
+                  imagePath: ImageConstant.imgArrowRight,
+                  height: 16.v,
+                  width: 8.h,
+                  margin:
+                      EdgeInsets.only(top: 7.v, bottom: 2.v))
+            ]));
   }
-
   /// Navigates to the previous screen.
   onTapArrowLeft(BuildContext context) {
     NavigatorService.goBack();

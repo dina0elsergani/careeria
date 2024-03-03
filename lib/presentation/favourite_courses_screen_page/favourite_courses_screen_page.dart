@@ -34,42 +34,49 @@ class FavouriteCoursesScreenPageState
     return SafeArea(
         child: Scaffold(
             appBar: _buildAppBar(context),
-            body: Padding(
-                padding: EdgeInsets.only(left: 16.h, top: 35.v, right: 16.h),
-                child: Consumer<FavouriteCoursesScreenProvider>(
-                    builder: (context, provider, child) {
-                  return ListView.separated(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      separatorBuilder: (context, index) {
-                        return SizedBox(height: 40.v);
-                      },
-                      itemCount: provider.favouriteCoursesScreenModelObj
-                          .androidlargetwentyfiveItemList.length,
-                      itemBuilder: (context, index) {
-                        AndroidlargetwentyfiveItemModel model = provider
-                            .favouriteCoursesScreenModelObj
-                            .androidlargetwentyfiveItemList[index];
-                        return AndroidlargetwentyfiveItemWidget(model,
-                            onTapImgUiUxdesign: () {
-                          onTapImgUiUxdesign(context);
-                        }, onTapTxtMohamedHesham: () {
-                          onTapTxtMohamedHesham(context);
-                        });
-                      });
-                }))));
+            body: Column(
+              children: [
+                SizedBox(height: 20.v),
+                Divider(color: theme.colorScheme.onPrimaryContainer),
+                SizedBox(height: 20.v),
+                Padding(
+                    padding: EdgeInsets.only(left: 16.h, right: 16.h),
+                    child: Consumer<FavouriteCoursesScreenProvider>(
+                        builder: (context, provider, child) {
+                      return ListView.separated(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          separatorBuilder: (context, index) {
+                            return SizedBox(height: 40.v);
+                          },
+                          itemCount: provider.favouriteCoursesScreenModelObj
+                              .androidlargetwentyfiveItemList.length,
+                          itemBuilder: (context, index) {
+                            AndroidlargetwentyfiveItemModel model = provider
+                                .favouriteCoursesScreenModelObj
+                                .androidlargetwentyfiveItemList[index];
+                            return AndroidlargetwentyfiveItemWidget(model,
+                                onTapImgUiUxdesign: () {
+                              onTapImgUiUxdesign(context);
+                            }, onTapTxtMohamedHesham: () {
+                              onTapTxtMohamedHesham(context);
+                            });
+                          });
+                    })),
+              ],
+            )));
   }
 
   /// Section Widget
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return CustomAppBar(
         leadingWidth: 34.h,
-        leading: AppbarLeadingImage(
-            imagePath: ImageConstant.imgArrowLeft,
-            margin: EdgeInsets.only(left: 24.h, top: 19.v, bottom: 16.v),
-            onTap: () {
-              onTapArrowLeft(context);
-            }),
+        // leading: AppbarLeadingImage(
+        //     imagePath: ImageConstant.imgArrowLeft,
+        //     margin: EdgeInsets.only(left: 24.h, top: 19.v, bottom: 16.v),
+        //     onTap: () {
+        //       onTapArrowLeft(context);
+        //     }),
         centerTitle: true,
         title: AppbarSubtitle(text: "lbl_favourite".tr));
   }

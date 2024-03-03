@@ -26,11 +26,11 @@ class SignupScreenState extends State<SignupScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 3000), () {
-      NavigatorService.popAndPushNamed(
-        AppRoutes.splashScreen,
-      );
-    });
+    // Future.delayed(const Duration(milliseconds: 3000), () {
+    //   NavigatorService.popAndPushNamed(
+    //     AppRoutes.splashScreen,
+    //   );
+    // });
   }
 
   @override

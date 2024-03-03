@@ -45,7 +45,7 @@ class CustomSwitch extends StatelessWidget {
         value: value ?? false,
         trackColor: appTheme.gray60028,
         thumbColor: (value ?? false) ? appTheme.whiteA700 : appTheme.whiteA700,
-        activeColor: appTheme.green500,
+        activeColor: theme.colorScheme.primary,
         onChanged: (value) {
           onChange(value);
         },

@@ -127,7 +127,9 @@ class StudentProfileScreenState extends State<StudentProfileScreen> {
                                     builder: (context, studentProfileModelObj,
                                         child) {
                                       return CustomDropDown(
-                                          width: 80.h,
+                                          hasBorder: false,
+                                          hasContentPadding: false,
+                                          width: 130.h,
                                           hintText: "lbl_english".tr,
                                           items: studentProfileModelObj
                                                   ?.dropdownItemList ??
@@ -138,7 +140,8 @@ class StudentProfileScreenState extends State<StudentProfileScreen> {
                                                 .onSelected(value);
                                           });
                                     }))
-                          ])),
+                          ])
+                          ),
                   SizedBox(height: 25.v),
                   Padding(
                       padding: EdgeInsets.only(left: 5.h),
@@ -154,12 +157,12 @@ class StudentProfileScreenState extends State<StudentProfileScreen> {
                                 padding: EdgeInsets.only(left: 21.h),
                                 child: Text("lbl_delete_account".tr,
                                     style: CustomTextStyles.titleMediumMedium)),
-                            Spacer(),
-                            CustomImageView(
-                                imagePath: ImageConstant.imgArrowLeft,
-                                height: 20.v,
-                                width: 10.h,
-                                margin: EdgeInsets.only(top: 3.v))
+                            // Spacer(),
+                            // CustomImageView(
+                            //     imagePath: ImageConstant.imgArrowLeft,
+                            //     height: 20.v,
+                            //     width: 10.h,
+                            //     margin: EdgeInsets.only(top: 3.v))
                           ])),
                   SizedBox(height: 30.v),
                   Padding(

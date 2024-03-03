@@ -16,6 +16,8 @@ class CustomDropDown extends StatelessWidget {
     this.prefix,
     this.prefixConstraints,
     this.suffix,
+    this.hasBorder,
+    this.hasContentPadding,
     this.suffixConstraints,
     this.contentPadding,
     this.borderDecoration,
@@ -56,6 +58,10 @@ class CustomDropDown extends StatelessWidget {
   final EdgeInsets? contentPadding;
 
   final InputBorder? borderDecoration;
+  
+  final bool? hasBorder; 
+
+  final bool? hasContentPadding;
 
   final Color? fillColor;
 
@@ -107,36 +113,36 @@ class CustomDropDown extends StatelessWidget {
         suffixIcon: suffix,
         suffixIconConstraints: suffixConstraints,
         isDense: true,
-        contentPadding: contentPadding ??
+        contentPadding:hasContentPadding!? contentPadding ??
             EdgeInsets.symmetric(
               horizontal: 8.h,
               vertical: 19.v,
-            ),
+            ):null,
         fillColor: fillColor ?? appTheme.gray50,
         filled: filled,
-        border: borderDecoration ??
+        border:hasBorder!? borderDecoration ??
             OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.h),
               borderSide: BorderSide(
                 color: theme.colorScheme.primary,
                 width: 1,
               ),
-            ),
-        enabledBorder: borderDecoration ??
+            ):null,
+        enabledBorder:hasBorder!? borderDecoration ??
             OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.h),
               borderSide: BorderSide(
                 color: theme.colorScheme.primary,
                 width: 1,
               ),
-            ),
-        focusedBorder: borderDecoration ??
+            ):null,
+        focusedBorder:hasBorder!? borderDecoration ??
             OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.h),
               borderSide: BorderSide(
                 color: theme.colorScheme.primary,
                 width: 1,
               ),
-            ),
+            ):null,
       );
 }

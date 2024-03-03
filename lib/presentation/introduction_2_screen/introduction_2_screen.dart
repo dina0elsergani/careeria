@@ -71,9 +71,9 @@ class Introduction2ScreenState extends State<Introduction2Screen> {
         child: Column(children: [
           SizedBox(height: 15.v),
           SizedBox(
-              width: 302.h,
+              width: 400.h,
               child: Text("msg_we_provide_personalized".tr,
-                  maxLines: 5,
+                  maxLines: 7,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
                   style:
@@ -82,7 +82,7 @@ class Introduction2ScreenState extends State<Introduction2Screen> {
           SizedBox(
               height: 15.v,
               child: AnimatedSmoothIndicator(
-                  activeIndex: 0,
+                  activeIndex: 1,
                   count: 3,
                   effect: ScrollingDotsEffect(
                       spacing: 8,
@@ -98,7 +98,7 @@ class Introduction2ScreenState extends State<Introduction2Screen> {
     return CustomElevatedButton(
         height: 56.v,
         text: "lbl_next".tr,
-        margin: EdgeInsets.only(left: 16.h, right: 16.h, bottom: 22.v),
+        margin: EdgeInsets.only(left: 16.h, right: 16.h, bottom: 22.v,top: 15.v),
         buttonStyle: CustomButtonStyles.outlineTeal,
         onPressed: () {
           onTapNext(context);
