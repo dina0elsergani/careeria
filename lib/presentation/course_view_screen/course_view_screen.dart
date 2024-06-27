@@ -147,8 +147,8 @@ class CourseViewScreenState extends State<CourseViewScreen> {
 
   /// Navigates to the courseVideosScreen when the action is triggered.
   onTapStart(BuildContext context) {
-    NavigatorService.pushNamed(
-      AppRoutes.courseVideosScreen,
-    );
+    // NavigatorService.pushNamed(
+    //   AppRoutes.courseVideosScreen,
+    // );
   }
 }

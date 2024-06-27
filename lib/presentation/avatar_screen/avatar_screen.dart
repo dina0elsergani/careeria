@@ -1,7 +1,6 @@
-import 'widgets/androidlargesix_item_widget.dart';
-import 'models/androidlargesix_item_model.dart';
-import 'models/avatar_model.dart';
-import 'package:careeria/widgets/custom_text_form_field.dart';
+import 'package:careeria/presentation/avatar_screen/models/androidlargesix_item_model.dart';
+import 'package:careeria/presentation/avatar_screen/widgets/androidlargesix_item_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:careeria/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:careeria/core/app_export.dart';
@@ -20,53 +19,75 @@ class AvatarScreen extends StatefulWidget {
 }
 
 class AvatarScreenState extends State<AvatarScreen> {
+  SharedPreferences? prefs;
+
   @override
   void initState() {
     super.initState();
+    initializePrefs();
+  }
+
+  Future<void> initializePrefs() async {
+    prefs = await SharedPreferences.getInstance();
+  }
+
+  void setSelectedAvatar(String avatarPath) async {
+    if (avatarPath.isNotEmpty) { // Ensure the avatarPath is not empty
+      await prefs?.setString('userAvatar', avatarPath);
+      NavigatorService.pushNamed(AppRoutes.techSoftSelectionScreen);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            body: SizedBox(
-                width: double.maxFinite,
-                child: Column(children: [
-                  _buildThree(context),
-                  SizedBox(height: 49.v),
-                  _buildAndroidLargeSix(context),
-                  SizedBox(height: 48.v),
-                  Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                          padding: EdgeInsets.only(left: 25.h),
-                          child: Text("lbl_name".tr,
-                              style: CustomTextStyles.titleMediumMedium))),
-                  SizedBox(height: 8.v),
-                  Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.h),
-                      child: Selector<AvatarProvider, TextEditingController?>(
-                          selector: (context, provider) =>
-                              provider.nameController,
-                          builder: (context, nameController, child) {
-                            return CustomTextFormField(
-                                controller: nameController,
-                                textInputAction: TextInputAction.done,
-                                borderDecoration:
-                                    TextFormFieldStyleHelper.outlinePrimary,
-                                fillColor: appTheme.whiteA700);
-                          })),
-                  SizedBox(height: 33.v),
-                  CustomElevatedButton(
-                      text: "lbl_continue".tr,
-                      margin: EdgeInsets.symmetric(horizontal: 16.h),
-                      onPressed: () {
-                        onTapContinue(context);
-                      }),
-                  SizedBox(height: 5.v)
-                ]))));
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: SizedBox(
+          width: double.maxFinite,
+          child: Column(
+            children: [
+              _buildThree(context),
+              SizedBox(height: 49.v),
+              Expanded(child: _buildAndroidLargeSix(context)), // Use Expanded to ensure proper layout
+              SizedBox(height: 48.v),
+              SizedBox(height: 45.v),
+              CustomElevatedButton(
+                width: 200.h,
+                text: "Continue",
+                onPressed: () => NavigatorService.pushNamed(AppRoutes.techSoftSelectionScreen),
+              ),
+              SizedBox(height: 5.v)
+            ],
+          ),
+        ),
+      ),
+    );
   }
+
+  Widget _buildAndroidLargeSix(BuildContext context) {
+    return Align(
+        alignment: Alignment.centerRight,
+        child: SizedBox(
+            height: 70.v,
+            child:
+                Consumer<AvatarProvider>(builder: (context, provider, child) {
+              return ListView.separated(
+                  padding: EdgeInsets.only(left: 16.h),
+                  scrollDirection: Axis.horizontal,
+                  separatorBuilder: (context, index) {
+                    return SizedBox(width: 24.h);
+                  },
+                  itemCount:
+                      provider.avatarModelObj.androidlargesixItemList.length,
+                  itemBuilder: (context, index) {
+                    AndroidlargesixItemModel model =
+                        provider.avatarModelObj.androidlargesixItemList[index];
+                    return AndroidlargesixItemWidget(model:model,onTap:(avatarPath) => setSelectedAvatar(model.ellipse ?? ""));
+                  });
+            })));
+  }
+
 
   /// Section Widget
   Widget _buildThree(BuildContext context) {
@@ -89,36 +110,5 @@ class AvatarScreenState extends State<AvatarScreen> {
                       textAlign: TextAlign.center,
                       style: theme.textTheme.titleLarge))
             ]));
-  }
-
-  /// Section Widget
-  Widget _buildAndroidLargeSix(BuildContext context) {
-    return Align(
-        alignment: Alignment.centerRight,
-        child: SizedBox(
-            height: 70.v,
-            child:
-                Consumer<AvatarProvider>(builder: (context, provider, child) {
-              return ListView.separated(
-                  padding: EdgeInsets.only(left: 16.h),
-                  scrollDirection: Axis.horizontal,
-                  separatorBuilder: (context, index) {
-                    return SizedBox(width: 24.h);
-                  },
-                  itemCount:
-                      provider.avatarModelObj.androidlargesixItemList.length,
-                  itemBuilder: (context, index) {
-                    AndroidlargesixItemModel model =
-                        provider.avatarModelObj.androidlargesixItemList[index];
-                    return AndroidlargesixItemWidget(model);
-                  });
-            })));
-  }
-
-  /// Navigates to the techSoftSelectionScreen when the action is triggered.
-  onTapContinue(BuildContext context) {
-    NavigatorService.pushNamed(
-      AppRoutes.techSoftSelectionScreen,
-    );
   }
 }

@@ -1,13 +1,17 @@
+import 'dart:convert';
+import 'package:careeria/main.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:careeria/core/app_export.dart';
 import 'package:careeria/widgets/app_bar/custom_app_bar.dart';
 import 'package:careeria/widgets/app_bar/appbar_leading_image.dart';
 import 'package:careeria/widgets/app_bar/appbar_title.dart';
 import 'package:careeria/widgets/custom_radio_button.dart';
 import 'package:careeria/widgets/custom_elevated_button.dart';
-import 'models/technical_test_model.dart';
-import 'package:flutter_svg_provider/flutter_svg_provider.dart' as fs;
-import 'package:flutter/material.dart';
-import 'package:careeria/core/app_export.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'provider/technical_test_provider.dart';
+import 'package:flutter_svg_provider/flutter_svg_provider.dart' as fs;
 
 class TechnicalTestScreen extends StatefulWidget {
   const TechnicalTestScreen({Key? key}) : super(key: key);
@@ -23,6 +27,42 @@ class TechnicalTestScreen extends StatefulWidget {
 }
 
 class TechnicalTestScreenState extends State<TechnicalTestScreen> {
+  final List<String> skills = [
+    'Database Fundamentals',
+    'Computer Architecture',
+    'Distributed Computing Systems',
+    'Cyber Security',
+    'Networking',
+    'Software Development',
+    'Programming Skills',
+    'Computer Forensics Fundamentals',
+    'AI ML',
+    'Software Engineering',
+    'Data Science',
+    'Graphics Designing',
+    'CV',
+    'NLP',
+    'Machine Learning'
+  ];
+
+  final List<String> answers = [
+    'Not Interested',
+    'Poor',
+    'Average',
+    'Beginner',
+    'Intermediate',
+    'Excellent',
+    'Professional'
+  ];
+
+  int currentQuestionIndex = 0;
+
+  void updateQuestionIndex(int index) {
+    setState(() {
+      currentQuestionIndex = index;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -46,34 +86,15 @@ class TechnicalTestScreenState extends State<TechnicalTestScreen> {
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildOne(context),
-                      SizedBox(height: 31.v),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("lbl_9".tr, style: theme.textTheme.bodyLarge),
-                            Padding(
-                                padding: EdgeInsets.only(left: 31.h),
-                                child: Text("lbl_10".tr,
-                                    style: theme.textTheme.bodyLarge))
-                          ]),
+                      _buildQuestionNumberRow(),
                       SizedBox(height: 40.v),
-                      Container(
-                          width: 304.h,
-                          margin: EdgeInsets.symmetric(horizontal: 11.h),
-                          child: Text("msg_how_likely_do_you".tr,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: CustomTextStyles.titleMediumWhiteA700)),
-                      SizedBox(height: 71.v),
-                      _buildGroup440(context),
-                      SizedBox(height: 64.v),
+                      Expanded(child: _buildQuestion(context, skills[currentQuestionIndex])),
+                      SizedBox(height: 40.v),
                       _buildTf(context),
                       SizedBox(height: 5.v)
                     ]))));
   }
 
-  /// Section Widget
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return CustomAppBar(
         leadingWidth: 32.h,
@@ -84,83 +105,79 @@ class TechnicalTestScreenState extends State<TechnicalTestScreen> {
               onTapArrowLeft(context);
             }),
         centerTitle: true,
-        title: AppbarTitle(text: "lbl_technical_test".tr));
+        title: AppbarTitle(text: "Technical Test"));
   }
 
-  /// Section Widget
-  Widget _buildOne(BuildContext context) {
-    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Text("lbl_1".tr, style: theme.textTheme.bodyLarge),
-      Spacer(flex: 17),
-      Text("lbl_2".tr, style: theme.textTheme.bodyLarge),
-      Spacer(flex: 16),
-      Text("lbl_3".tr, style: theme.textTheme.bodyLarge),
-      Spacer(flex: 16),
-      Text("lbl_4".tr, style: theme.textTheme.bodyLarge),
-      Spacer(flex: 16),
-      Text("lbl_5".tr, style: theme.textTheme.bodyLarge),
-      Spacer(flex: 17),
-      Text("lbl_6".tr, style: theme.textTheme.bodyLarge),
-      Container(
-          height: 24.v,
-          width: 20.h,
-          margin: EdgeInsets.only(left: 28.h),
-          child: Stack(alignment: Alignment.centerRight, children: [
-            Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                    height: 20.adaptSize,
-                    width: 20.adaptSize,
-                    decoration: BoxDecoration(
-                        color: appTheme.whiteA700,
-                        borderRadius: BorderRadius.circular(10.h)))),
-            Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                    padding: EdgeInsets.only(right: 4.h),
-                    child: Text("lbl_7".tr,
-                        style: CustomTextStyles.bodyLargePrimary)))
-          ])),
-      Spacer(flex: 15),
-      Text("lbl_8".tr, style: theme.textTheme.bodyLarge)
-    ]);
+  Widget _buildQuestionNumberRow() {
+    return Container(
+      height: 40, // Set a fixed height for the row
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: skills.length,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () => updateQuestionIndex(index),
+            child: Container(
+              width: 40, // Width of the circle
+              height: 40, // Height of the circle
+              alignment: Alignment.center,
+              margin: EdgeInsets.symmetric(horizontal: 8),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: currentQuestionIndex == index ? theme.colorScheme.primary : Colors.white,
+                border: Border.all(color: theme.colorScheme.primary), // Optional border
+              ),
+              child: Text(
+                (index + 1).toString(),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: currentQuestionIndex == index ? Colors.white : theme.colorScheme.primary,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 
-  /// Section Widget
-  Widget _buildGroup440(BuildContext context) {
+  Widget _buildQuestion(BuildContext context, String skill) {
     return Consumer<TechnicalTestProvider>(builder: (context, provider, child) {
-      return provider.technicalTestModelObj!.radioList.isNotEmpty
-          ? Column(children: [
-              CustomRadioButton(
-                  text: "msg_not_likely_at_all".tr,
-                  value: provider.technicalTestModelObj?.radioList[0] ?? "",
-                  groupValue: provider.radioGroup,
-                  padding: EdgeInsets.fromLTRB(20.h, 11.v, 30.h, 11.v),
-                  onChange: (value) {
-                    provider.changeRadioButton1(value);
-                  }),
-              Padding(
-                  padding: EdgeInsets.only(top: 24.v),
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Rate your skills in $skill:",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              )),
+          SizedBox(height: 16.v),
+          Expanded(
+            child: ListView.builder(
+              itemCount: answers.length,
+              itemBuilder: (context, index) {
+                final answer = answers[index];
+                return Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.v),
                   child: CustomRadioButton(
-                      text: "lbl_extremely_like".tr,
-                      value: provider.technicalTestModelObj?.radioList[1] ?? "",
-                      groupValue: provider.radioGroup,
-                      padding: EdgeInsets.fromLTRB(19.h, 11.v, 30.h, 11.v),
-                      onChange: (value) {
-                        provider.changeRadioButton1(value);
-                      })),
-              Padding(
-                  padding: EdgeInsets.only(top: 24.v),
-                  child: CustomRadioButton(
-                      text: "lbl_both".tr,
-                      value: provider.technicalTestModelObj?.radioList[2] ?? "",
-                      groupValue: provider.radioGroup,
-                      padding: EdgeInsets.fromLTRB(19.h, 10.v, 30.h, 10.v),
-                      onChange: (value) {
-                        provider.changeRadioButton1(value);
-                      }))
-            ])
-          : Container();
+                    text: answer,
+                    value: answer,
+                    groupValue: provider.getRadioGroup(skill),
+                    padding: EdgeInsets.symmetric(vertical: 3.v),
+                    backgroundColor: Colors.transparent,
+                    onChange: (value) {
+                      provider.changeRadioButton1(skill, value);
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+          SizedBox(height: 16.v),
+        ],
+      );
     });
   }
 
@@ -170,16 +187,16 @@ class TechnicalTestScreenState extends State<TechnicalTestScreen> {
       Expanded(
           child: CustomElevatedButton(
               height: 44.v,
-              text: "lbl".tr,
+              text: "Cancel",
               margin: EdgeInsets.only(right: 14.h),
               buttonStyle: CustomButtonStyles.fillWhiteA,
               buttonTextStyle: CustomTextStyles.titleLargePrimary_1)),
       Expanded(
           child: CustomElevatedButton(
               height: 44.v,
-              text: "lbl_done".tr,
+              text: "Done",
               margin: EdgeInsets.only(left: 14.h),
-              buttonTextStyle: theme.textTheme.titleLarge!,
+              buttonTextStyle: Theme.of(context).textTheme.titleLarge!,
               onPressed: () {
                 onTapDone(context);
               }))
@@ -191,10 +208,43 @@ class TechnicalTestScreenState extends State<TechnicalTestScreen> {
     NavigatorService.goBack();
   }
 
-  /// Navigates to the techTestResultScreen when the action is triggered.
-  onTapDone(BuildContext context) {
-    NavigatorService.pushNamed(
-      AppRoutes.techTestResultScreen,
-    );
+onTapDone(BuildContext context) async {
+  final provider = Provider.of<TechnicalTestProvider>(context, listen: false);
+  final answers = provider.getAnswers();
+  answers['user_id'] = userId as String;  // Ensure user ID is included
+  print('answers $answers');
+
+  // Send the data to the backend
+  final response = await http.post(
+    Uri.parse('${apiUrl}/api/v1/techtestresponses'),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: json.encode(answers),
+  );
+
+  print('Response status code: ${response.statusCode}');
+  print('Response body: ${response.body}');
+
+  if (response.statusCode == 200) {
+    final prefs = await SharedPreferences.getInstance();
+    // Decode the JSON response body
+    final body = json.decode(response.body);
+
+    // Safely access 'prediction' and 'role' from the response
+    if (body['prediction'] != null && body['prediction']['role'] != null) {
+      final role = body['prediction']['role'];
+      await prefs.setString('userTrack', role);
+      print('role ${role}');
+      // Navigate to the result screen with the prediction data
+      NavigatorService.pushNamed(AppRoutes.techTestResultScreen, arguments: body['prediction']);
+    } else {
+      print('Prediction data or role is missing');
+    }
+  } else {
+    // Handle error
+    print('Failed to get prediction: ${response.body}');
   }
+}
+
 }

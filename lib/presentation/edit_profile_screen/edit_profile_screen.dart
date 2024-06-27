@@ -1,3 +1,8 @@
+import 'dart:convert';
+
+import 'package:careeria/main.dart';
+import 'package:careeria/presentation/avatar_screen/provider/avatar_provider.dart';
+import 'package:careeria/presentation/signup_screen/provider/signup_provider.dart';
 import 'package:careeria/widgets/app_bar/custom_app_bar.dart';
 import 'package:careeria/widgets/app_bar/appbar_leading_image.dart';
 import 'package:careeria/widgets/app_bar/appbar_subtitle.dart';
@@ -6,12 +11,13 @@ import 'package:careeria/widgets/custom_icon_button.dart';
 import 'package:careeria/widgets/custom_text_form_field.dart';
 import 'package:careeria/core/utils/validation_functions.dart';
 import 'package:careeria/widgets/custom_drop_down.dart';
+import 'package:flutter/rendering.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'models/edit_profile_model.dart';
-import 'package:careeria/widgets/custom_outlined_button.dart';
 import 'package:flutter/material.dart';
 import 'package:careeria/core/app_export.dart';
 import 'provider/edit_profile_provider.dart';
-
+import 'package:http/http.dart' as http;
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);
 
@@ -32,9 +38,42 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     super.initState();
   }
+  Future<void> updateUser(String name, String email, String phone,BuildContext context) async {
+    final url = Uri.parse('${apiUrl}/api/v1/users/${userId}');
 
+    try {
+      final response = await http.put(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({
+          'name': name,
+          'email': email,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        var responseData = json.decode(response.body);
+        userName = responseData['data']['name'];
+        userEmail = responseData['data']['email'];
+        userPhone = phone;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('userName', userName!);
+        await prefs.setString('userEmail', userEmail!);
+        await prefs.setString('userPhone', userPhone!);
+        Navigator.pushNamed(context, AppRoutes.studentProfileScreen);
+      } else {
+        print('Failed to update user: Status code: ${response.statusCode}, Response: ${response.body}');
+      }
+    } catch (e) {
+      print('Error occurred during update: $e');
+    }
+  }
   @override
   Widget build(BuildContext context) {
+    print('userData ${userName} ${userEmail} ${userId}');
     return SafeArea(
         child: Scaffold(
             backgroundColor: appTheme.gray50,
@@ -85,7 +124,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                                                       BorderRadiusStyle
                                                                           .circleBorder55),
                                                           child: CustomImageView(
-                                                              imagePath:
+                                                              imagePath: userAvatar !=''?userAvatar:
                                                                   ImageConstant
                                                                       .imgEllipse8,
                                                               height:
@@ -141,33 +180,6 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                                     .textTheme.titleMedium)),
                                         SizedBox(height: 4.v),
                                         _buildPhoneNumber(context),
-                                        SizedBox(height: 5.v),
-                                        Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text("lbl_data_of_birth".tr,
-                                                style: theme
-                                                    .textTheme.titleMedium)),
-                                        SizedBox(height: 5.v),
-                                        Selector<EditProfileProvider,
-                                                EditProfileModel?>(
-                                            selector: (context, provider) =>
-                                                provider.editProfileModelObj,
-                                            builder: (context,
-                                                editProfileModelObj, child) {
-                                              return CustomDropDown(
-                                                  hasBorder: true,
-                                                  hasContentPadding: true,
-                                                  hintText: "lbl_20_5_2002".tr,
-                                                  items: editProfileModelObj
-                                                          ?.dropdownItemList ??
-                                                      [],
-                                                  onChanged: (value) {
-                                                    context
-                                                        .read<
-                                                            EditProfileProvider>()
-                                                        .onSelected(value);
-                                                  });
-                                            })
                                       ]))
                             ]))))),
             bottomNavigationBar: _buildUpdate(context)));
@@ -194,7 +206,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         builder: (context, fullNameController, child) {
           return CustomTextFormField(
               controller: fullNameController,
-              hintText: "lbl_anna_alvarado".tr,
+              hintText: userName,
               hintStyle: CustomTextStyles.bodyMediumBluegray700,
               suffix: Container(
                   margin: EdgeInsets.fromLTRB(30.h, 21.v, 13.h, 21.v),
@@ -213,7 +225,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         builder: (context, emailController, child) {
           return CustomTextFormField(
               controller: emailController,
-              hintText: "msg_annaalvarado221_gmail_com".tr,
+              hintText: userEmail,
               hintStyle: CustomTextStyles.bodyMediumBluegray700,
               textInputType: TextInputType.emailAddress,
               suffix: Container(
@@ -239,7 +251,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         builder: (context, phoneNumberController, child) {
           return CustomTextFormField(
               controller: phoneNumberController,
-              hintText: "lbl_01005239876".tr,
+              hintText: userPhone,
               hintStyle: CustomTextStyles.bodyMediumBluegray700,
               textInputAction: TextInputAction.done,
               textInputType: TextInputType.phone,
@@ -277,8 +289,14 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
   /// Navigates to the studentProfileScreen when the action is triggered.
   onTapUpdate(BuildContext context) {
-    NavigatorService.pushNamed(
-      AppRoutes.studentProfileScreen,
-    );
+      if (_formKey.currentState!.validate()) {
+      final provider = Provider.of<EditProfileProvider>(context, listen: false); // Access provider
+        updateUser(
+          provider.fullNameController.text,
+          provider.emailController.text,
+          provider.phoneNumberController.text,
+          context
+        );
+      }
   }
 }

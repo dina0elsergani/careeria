@@ -2,31 +2,24 @@ import '../models/androidlargesix_item_model.dart';
 import 'package:flutter/material.dart';
 import 'package:careeria/core/app_export.dart';
 
-// ignore: must_be_immutable
 class AndroidlargesixItemWidget extends StatelessWidget {
-  AndroidlargesixItemWidget(
-    this.androidlargesixItemModelObj, {
-    Key? key,
-  }) : super(
-          key: key,
-        );
+  final AndroidlargesixItemModel model;
+  final Function(String) onTap;
 
-  AndroidlargesixItemModel androidlargesixItemModelObj;
+  AndroidlargesixItemWidget({Key? key, required this.model, required this.onTap})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 70.h,
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: CustomImageView(
-          imagePath: androidlargesixItemModelObj?.ellipse,
-          height: 70.adaptSize,
-          width: 70.adaptSize,
-          radius: BorderRadius.circular(
-            35.h,
-          ),
+    return GestureDetector(
+      onTap: () => onTap(model.ellipse ?? ""), // Ensure non-null by providing a default
+      child: Container(
+        width: 70.h,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.blue), // Simplified for the example
+          borderRadius: BorderRadius.circular(35.h),
         ),
+        child: Image.asset(model.ellipse ?? 'default_image_path'), // Default path if null
       ),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:careeria/main.dart';
 import 'package:careeria/widgets/app_bar/custom_app_bar.dart';
 import 'package:careeria/widgets/app_bar/appbar_leading_image.dart';
 import 'package:careeria/widgets/app_bar/appbar_subtitle.dart';
@@ -42,7 +43,7 @@ class SettingsScreenPageState extends State<SettingsScreenPage> {
                           padding: EdgeInsets.only(left: 24.h, right: 57.h),
                           child: Row(children: [
                             CustomImageView(
-                                imagePath: ImageConstant.imgEllipse1265x66,
+                                imagePath:userAvatar !='' ?userAvatar: ImageConstant.imgEllipse1265x66,
                                 height: 65.v,
                                 width: 66.h,
                                 radius: BorderRadius.circular(33.h),
@@ -60,11 +61,11 @@ class SettingsScreenPageState extends State<SettingsScreenPage> {
                                           onTap: () {
                                             onTapTxtAnnaAlvarad(context);
                                           },
-                                          child: Text("lbl_anna_alvarad".tr,
+                                          child: Text(userName as String,
                                               style: CustomTextStyles
                                                   .titleMediumBluegray800)),
                                       SizedBox(height: 2.v),
-                                      Text("msg_annaalvarado221_gmail_com".tr,
+                                      Text(userEmail as String,
                                           style: CustomTextStyles
                                               .bodyMediumBeVietnamBluegray900)
                                     ]))

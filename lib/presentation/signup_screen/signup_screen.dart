@@ -1,11 +1,15 @@
 import 'package:careeria/core/utils/validation_functions.dart';
+import 'package:careeria/main.dart';
 import 'package:careeria/widgets/custom_text_form_field.dart';
 import 'package:careeria/widgets/custom_outlined_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'models/signup_model.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart' as fs;
 import 'package:flutter/material.dart';
 import 'package:careeria/core/app_export.dart';
 import 'provider/signup_provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -22,6 +26,45 @@ class SignupScreen extends StatefulWidget {
 // ignore_for_file: must_be_immutable
 class SignupScreenState extends State<SignupScreen> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  Future<void> signup(String firstName, String lastName, String email, String password, String confirmPassword, BuildContext context) async {
+    final url = Uri.parse('${apiUrl}/api/v1/auth/signup');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8', 'Accept': 'application/json',
+        },
+        body: jsonEncode({
+          'name': "$firstName $lastName",
+          'email': email,
+          'password': password,
+          'password_confirmation': confirmPassword,
+        }),
+      );
+
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 201) {
+        print('Signup successful: ${response.body}');
+        print('responseData: ${responseData}');
+        isLoggedIn = true;
+        userName = "$firstName $lastName";
+        userEmail = email;
+        userId = responseData['userId'].toString(); // Convert userId to String
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', isLoggedIn);
+        await prefs.setString('userEmail', userEmail!);
+        await prefs.setString('userName', userName!);
+        await prefs.setString('userId', userId!);
+        Navigator.pushNamed(context, AppRoutes.avatarScreen);
+      } else {
+        print('Failed to signup: Status code: ${response.statusCode}, Response: ${response.body}');
+      }
+    } catch (e) {
+      print('Error occurred during signup: $e');
+    }
+  }
 
   @override
   void initState() {
@@ -227,12 +270,33 @@ class SignupScreenState extends State<SignupScreen> {
         text: "lbl_sign_up2".tr,
         buttonStyle: CustomButtonStyles.outlinePrimary,
         onPressed: () {
-          onTapSignUP(context);
-        });
+       if (_formKey.currentState!.validate()) {
+      final provider = Provider.of<SignupProvider>(context, listen: false); // Access provider
+        signup(
+          provider.firstNameController.text,
+          provider.lastNameController.text,
+          provider.emailController.text,
+          provider.passwordController.text,
+          provider.confirmpasswordController.text,
+          context 
+        );
+      }
+      } 
+      );
   }
 
   onTapSignUP(BuildContext context) {
-    // TODO: implement Actions
+      if (_formKey.currentState!.validate()) {
+      final provider = Provider.of<SignupProvider>(context, listen: false); // Access provider
+        signup(
+          provider.firstNameController.text,
+          provider.lastNameController.text,
+          provider.emailController.text,
+          provider.passwordController.text,
+          provider.confirmpasswordController.text,
+          context
+        );
+      }
   }
 
   /// Navigates to the loginScreen when the action is triggered.

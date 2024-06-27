@@ -9,7 +9,7 @@ class AndroidlargeseventeenItemWidget extends StatelessWidget {
     Key? key,
     this.onTapImgUiUxdesign,
     this.onTapTxtUiUxDesign1,
-    this.onTapTxtMohamedHesham,
+    this.onTapTxtmohamedHesham,
   }) : super(
           key: key,
         );
@@ -20,7 +20,7 @@ class AndroidlargeseventeenItemWidget extends StatelessWidget {
 
   VoidCallback? onTapTxtUiUxDesign1;
 
-  VoidCallback? onTapTxtMohamedHesham;
+  VoidCallback? onTapTxtmohamedHesham;
 
   @override
   Widget build(BuildContext context) {
@@ -53,9 +53,6 @@ class AndroidlargeseventeenItemWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         GestureDetector(
-                          onTap: () {
-                            onTapTxtUiUxDesign1!.call();
-                          },
                           child: Text(
                             androidlargeseventeenItemModelObj.uiUxDesign1!,
                             style: CustomTextStyles.titleSmallPoppins,
@@ -63,9 +60,6 @@ class AndroidlargeseventeenItemWidget extends StatelessWidget {
                         ),
                         SizedBox(height: 8.v),
                         GestureDetector(
-                          onTap: () {
-                            onTapTxtMohamedHesham!.call();
-                          },
                           child: Text(
                             androidlargeseventeenItemModelObj.mohamedHesham!,
                             style: theme.textTheme.bodySmall,
@@ -84,17 +78,6 @@ class AndroidlargeseventeenItemWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),
-              SizedBox(height: 14.v),
-              CustomImageView(
-                imagePath: androidlargeseventeenItemModelObj?.complete,
-                height: 1.v,
-                width: 183.h,
-              ),
-              SizedBox(height: 9.v),
-              Text(
-                androidlargeseventeenItemModelObj.complete1!,
-                style: CustomTextStyles.bodySmallGreen600,
               ),
             ],
           ),

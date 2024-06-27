@@ -1,3 +1,6 @@
+import 'package:careeria/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'widgets/frameeightyfour_item_widget.dart';
 import 'models/frameeightyfour_item_model.dart';
 import 'models/student_home_screen_model.dart';
@@ -21,11 +24,30 @@ class StudentHomeScreenPage extends StatefulWidget {
 }
 
 class StudentHomeScreenPageState extends State<StudentHomeScreenPage> {
+  String? videoImage;
+  String? videoName;
   @override
   void initState() {
     super.initState();
+    loadLatestFavorite();
   }
-
+  Future<void> loadLatestFavorite() async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> favorites = prefs.getStringList('favorites') ?? [];
+    print('favourites ${favorites}');
+    if (favorites.isNotEmpty) {
+      String latestFavorite = favorites.last;
+      List<String> parts = latestFavorite.split(',');
+      if (parts.length >= 3) {
+        String title = parts[0];
+        String thumbnail = parts[2];
+        setState(() {
+          videoImage=thumbnail;
+          videoName=title;
+        });
+      }
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -48,7 +70,7 @@ class StudentHomeScreenPageState extends State<StudentHomeScreenPage> {
                                 style:
                                     CustomTextStyles.titleLargePrimaryBold))),
                     SizedBox(height: 13.v),
-                    _buildFrameEightyFour(context),
+                    videoImage==null? SizedBox(): _buildFrameEightyFour(context),
                     SizedBox(height: 22.v),
                     Align(
                         alignment: Alignment.centerLeft,
@@ -74,7 +96,7 @@ class StudentHomeScreenPageState extends State<StudentHomeScreenPage> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               CustomImageView(
-                  imagePath: ImageConstant.imgEllipse1265x66,
+                  imagePath:userAvatar !='' ?userAvatar: ImageConstant.imgEllipse1265x66,
                   height: 65.v,
                   width: 66.h,
                   radius: BorderRadius.circular(33.h),
@@ -96,7 +118,7 @@ class StudentHomeScreenPageState extends State<StudentHomeScreenPage> {
                                   },
                                   child: Padding(
                                       padding: EdgeInsets.only(top: 4.v),
-                                      child: Text("lbl_anna_alvarado".tr,
+                                      child: Text(userName as String,
                                           style:
                                               CustomTextStyles.titleSmall15))),
                               CustomImageView(
@@ -109,7 +131,7 @@ class StudentHomeScreenPageState extends State<StudentHomeScreenPage> {
                                   })
                             ]),
                         SizedBox(height: 14.v),
-                        Text("msg_annaalvarado221_gmail_com".tr,
+                        Text(userEmail as String,
                             style:
                                 CustomTextStyles.bodyMediumBeVietnamBluegray900)
                       ]))
@@ -118,61 +140,72 @@ class StudentHomeScreenPageState extends State<StudentHomeScreenPage> {
 
   /// Section Widget
   Widget _buildFrameEightyFour(BuildContext context) {
-    return SizedBox(
-        height: 205.v,
-        child: Consumer<StudentHomeScreenProvider>(
-            builder: (context, provider, child) {
-          return ListView.separated(
-              padding: EdgeInsets.only(left: 16.h),
-              scrollDirection: Axis.horizontal,
-              separatorBuilder: (context, index) {
-                return SizedBox(
-                    width: 221.0.h,
-                    child: Divider(
-                        height: 2.v,
-                        thickness: 2.v,
-                        color: theme.colorScheme.primary,
-                        indent: 11.0.h,
-                        endIndent: 11.0.h));
-              },
-              itemCount: provider
-                  .studentHomeScreenModelObj.frameeightyfourItemList.length,
-              itemBuilder: (context, index) {
-                FrameeightyfourItemModel model = provider
-                    .studentHomeScreenModelObj.frameeightyfourItemList[index];
-                return FrameeightyfourItemWidget(model);
-              });
-        }));
+    return Container(
+      decoration: AppDecoration.outlineBlack9001.copyWith(
+        borderRadius: BorderRadiusStyle.roundedBorder15,
+      ),
+      width: 199.h,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(  // Added ClipRRect for rounded corners on the image
+            borderRadius: BorderRadius.vertical(top: Radius.circular(15.h)), // Match container's border radius
+            child: SizedBox(
+              height: 95.v,
+              width: 199.h,
+              child: Image.network(
+                videoImage as String,
+                fit: BoxFit.cover, // This will cover the area without distorting the aspect ratio
+                width: 199.h, // Ensuring the image fills the width
+                height: 95.v, // Ensuring the image fills the height
+              ),
+            ),
+          ),
+          SizedBox(height: 9.v),
+          SizedBox(
+            height: 60.v,
+            width: 199.h,
+            child: Stack(
+              alignment: Alignment.topLeft,
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 6.h),
+                    child: Text(
+                      videoName!,
+                      style: CustomTextStyles.titleLargePrimaryMedium,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 8.v),
+          SizedBox(height: 13.v),
+        ],
+      ),
+    );
   }
 
   /// Section Widget
   Widget _buildDescription(BuildContext context) {
-    return Padding(
-        padding: EdgeInsets.only(left: 16.h),
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Expanded(child: Consumer<StudentHomeScreenProvider>(
-              builder: (context, provider, child) {
-            return ListView.separated(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                separatorBuilder: (context, index) {
-                  return SizedBox(height: 1.v);
-                },
-                itemCount: provider
-                    .studentHomeScreenModelObj.descriptionItemList.length,
-                itemBuilder: (context, index) {
-                  DescriptionItemModel model = provider
-                      .studentHomeScreenModelObj.descriptionItemList[index];
-                  return DescriptionItemWidget(model);
-                });
-          })),
-          SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: IntrinsicWidth(
-                  child: _buildFiftySeven(context,
-                      description: "msg_garage_struggle".tr)))
-        ]));
+    return 
+        SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.only(left: 17.h),
+        child: IntrinsicWidth(
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Padding(
+              padding: EdgeInsets.only(bottom: 2.v),
+              child: _buildFiftySeven(context,
+                  description: "msg_garage_struggle".tr)),
+          Padding(
+              padding: EdgeInsets.only(left: 19.h),
+              child: _buildFiftySeven(context,
+                  description: "msg_garage_struggle".tr))
+        ])));
   }
 
   /// Section Widget

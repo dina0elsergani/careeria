@@ -23,31 +23,18 @@ class CustomRadioButton extends StatelessWidget {
         );
 
   final BoxDecoration? decoration;
-
   final Alignment? alignment;
-
   final bool? isRightCheck;
-
   final double? iconSize;
-
   String? value;
-
   final String? groupValue;
-
   final Function(String) onChange;
-
   final String? text;
-
   final double? width;
-
   final EdgeInsetsGeometry? padding;
-
   final TextStyle? textStyle;
-
   final TextAlign? textAlignment;
-
   final Gradient? gradient;
-
   final Color? backgroundColor;
 
   @override
@@ -73,39 +60,45 @@ class CustomRadioButton extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10.h),
               ),
           width: width,
-          padding: padding,
+          padding: padding ?? EdgeInsets.all(8.0),
           child: (isRightCheck ?? false)
               ? rightSideRadioButton
               : leftSideRadioButton,
         ),
       );
+
   Widget get leftSideRadioButton => Row(
         children: [
           Padding(
             child: radioButtonWidget,
             padding: EdgeInsets.only(right: 8),
           ),
-          textWidget,
+          Expanded(child: textWidget),
         ],
       );
+
   Widget get rightSideRadioButton => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          textWidget,
+          Expanded(child: textWidget),
           Padding(
             padding: EdgeInsets.only(left: 8),
             child: radioButtonWidget,
           ),
         ],
       );
+
   Widget get textWidget => Text(
         text ?? "",
+        overflow: TextOverflow.visible,
+        softWrap: true,
         textAlign: textAlignment ?? TextAlign.center,
         style: textStyle ?? CustomTextStyles.bodyMediumRegular,
       );
+
   Widget get radioButtonWidget => SizedBox(
-        height: iconSize ?? 14.h,
-        width: iconSize ?? 14.h,
+        height: iconSize ?? 24.h, // Increased height
+        width: iconSize ?? 24.h,  // Increased width
         child: Radio<String>(
           visualDensity: VisualDensity(
             vertical: -4,
@@ -118,6 +111,7 @@ class CustomRadioButton extends StatelessWidget {
           },
         ),
       );
+
   BoxDecoration get radioButtonDecoration =>
       BoxDecoration(color: backgroundColor);
 }

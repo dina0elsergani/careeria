@@ -30,12 +30,14 @@ class Introduction2ScreenState extends State<Introduction2Screen> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-            body: SizedBox(
-                width: double.maxFinite,
-                child: Column(children: [
-                  _buildSeven(context),
-                  _buildAndroidLarge(context)
-                ])),
+            body: SingleChildScrollView(
+              child: SizedBox(
+                  width: double.maxFinite,
+                  child: Column(children: [
+                    _buildSeven(context),
+                    _buildAndroidLarge(context)
+                  ])),
+            ),
             bottomNavigationBar: _buildNext(context)));
   }
 
@@ -69,7 +71,7 @@ class Introduction2ScreenState extends State<Introduction2Screen> {
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 26.h, vertical: 38.v),
         child: Column(children: [
-          SizedBox(height: 15.v),
+          SizedBox(height: 6.v),
           SizedBox(
               width: 400.h,
               child: Text("msg_we_provide_personalized".tr,

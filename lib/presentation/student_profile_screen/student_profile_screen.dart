@@ -1,4 +1,8 @@
+import 'package:careeria/main.dart';
+import 'package:careeria/presentation/login_screen/login_screen.dart';
+import 'package:careeria/presentation/login_screen/provider/login_provider.dart';
 import 'package:careeria/widgets/custom_drop_down.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'models/student_profile_model.dart';
 import 'package:careeria/widgets/app_bar/custom_app_bar.dart';
 import 'package:careeria/widgets/app_bar/appbar_leading_image.dart';
@@ -8,7 +12,7 @@ import 'package:flutter_svg_provider/flutter_svg_provider.dart' as fs;
 import 'package:flutter/material.dart';
 import 'package:careeria/core/app_export.dart';
 import 'provider/student_profile_provider.dart';
-
+import 'package:http/http.dart' as http;
 class StudentProfileScreen extends StatefulWidget {
   const StudentProfileScreen({Key? key}) : super(key: key);
 
@@ -48,7 +52,7 @@ class StudentProfileScreenState extends State<StudentProfileScreen> {
                             _buildAppBar(context),
                             SizedBox(height: 38.v),
                             CustomImageView(
-                                imagePath: ImageConstant.imgEllipse1,
+                                imagePath:userAvatar !=''?userAvatar: ImageConstant.imgEllipse1,
                                 height: 110.adaptSize,
                                 width: 110.adaptSize,
                                 radius: BorderRadius.circular(55.h)),
@@ -61,17 +65,12 @@ class StudentProfileScreenState extends State<StudentProfileScreen> {
                                     children: [
                                       Align(
                                           alignment: Alignment.center,
-                                          child: Text("lbl_anna_alvarado".tr,
-                                              style: CustomTextStyles
-                                                  .titleLargeBluegray800)),
-                                      Align(
-                                          alignment: Alignment.center,
-                                          child: Text("lbl_anna_alvarado".tr,
+                                          child: Text(userName as String,
                                               style: CustomTextStyles
                                                   .titleLargeBluegray800))
                                     ])),
                             SizedBox(height: 1.v),
-                            Text("msg_annaalvarado221_gmail_com".tr,
+                            Text(userEmail as String,
                                 style: CustomTextStyles
                                     .titleSmallPoppinsBluegray700),
                             SizedBox(height: 26.v),
@@ -153,10 +152,13 @@ class StudentProfileScreenState extends State<StudentProfileScreen> {
                                 height: 15.v,
                                 width: 14.h,
                                 margin: EdgeInsets.only(bottom: 6.v)),
-                            Padding(
-                                padding: EdgeInsets.only(left: 21.h),
-                                child: Text("lbl_delete_account".tr,
-                                    style: CustomTextStyles.titleMediumMedium)),
+                            GestureDetector(
+                              onTap: () => deleteAccount(context),
+                              child: Padding(
+                                  padding: EdgeInsets.only(left: 21.h),
+                                  child: Text("lbl_delete_account".tr,
+                                      style: CustomTextStyles.titleMediumMedium)),
+                            ),
                             // Spacer(),
                             // CustomImageView(
                             //     imagePath: ImageConstant.imgArrowLeft,
@@ -165,21 +167,26 @@ class StudentProfileScreenState extends State<StudentProfileScreen> {
                             //     margin: EdgeInsets.only(top: 3.v))
                           ])),
                   SizedBox(height: 30.v),
-                  Padding(
-                      padding: EdgeInsets.only(left: 5.h),
-                      child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CustomImageView(
-                                imagePath: ImageConstant.imgThumbsUpBlack900,
-                                height: 18.v,
-                                width: 16.h,
-                                margin: EdgeInsets.only(bottom: 5.v)),
-                            Padding(
-                                padding: EdgeInsets.only(left: 19.h),
-                                child: Text("lbl_log_out".tr,
-                                    style: theme.textTheme.titleMedium))
-                          ])),
+                  GestureDetector(
+                      onTap: () {
+                        logout(context);
+                      },
+                    child: Padding(
+                        padding: EdgeInsets.only(left: 5.h),
+                        child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomImageView(
+                                  imagePath: ImageConstant.imgThumbsUpBlack900,
+                                  height: 18.v,
+                                  width: 16.h,
+                                  margin: EdgeInsets.only(bottom: 5.v)),
+                              Padding(
+                                  padding: EdgeInsets.only(left: 19.h),
+                                  child: Text("lbl_log_out".tr,
+                                      style: theme.textTheme.titleMedium))
+                            ])),
+                  ),
                   SizedBox(height: 44.v)
                 ])));
   }
@@ -203,7 +210,60 @@ class StudentProfileScreenState extends State<StudentProfileScreen> {
   onTapArrowLeft(BuildContext context) {
     NavigatorService.goBack();
   }
+  Future<void> logout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', false);
+    await prefs.setString('userEmail', '');
+    await prefs.setString('userId', '');
+    await prefs.setString('userName', '');
+    await prefs.setString('userAvatar', '');
+    await prefs.setString('userPhone', '');
+    await prefs.setBool('isTechSelected', false);
+    await prefs.setString('selectedOption', '');
+    await prefs.setString('userTrack', '');
+    await prefs.setStringList('weaknesses', []);
+    await prefs.setStringList('favorites',[]);
 
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ChangeNotifierProvider(
+          create: (context) => LoginProvider(),
+          child: LoginScreen(),
+        ),
+      ),
+    );
+ }
+  Future<void> deleteAccount(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    String userId = prefs.getString('userId') ?? '';
+    print('${apiUrl} ${userId}');
+    // Make HTTP DELETE request
+    final response = await http.delete(
+      Uri.parse('$apiUrl/api/v1/users/$userId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // Clear all saved data
+      await prefs.clear();
+
+      // Navigate to the login screen
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ChangeNotifierProvider(
+          create: (context) => LoginProvider(),
+          child: LoginScreen(),
+        )),
+        (Route<dynamic> route) => false,
+      );
+    } else {
+      // Handle error or show an error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete account')),
+      );
+    }
+  }
   /// Navigates to the editProfileScreen when the action is triggered.
   onTapEditProfile(BuildContext context) {
     NavigatorService.pushNamed(

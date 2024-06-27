@@ -11,8 +11,13 @@ import '../models/androidlargesix_item_model.dart';
 // ignore_for_file: must_be_immutable
 class AvatarProvider extends ChangeNotifier {
   TextEditingController nameController = TextEditingController();
-
   AvatarModel avatarModelObj = AvatarModel();
+  String? selectedAvatarPath;
+
+  void selectAvatar(String path) {
+    selectedAvatarPath = path;
+    notifyListeners();
+  }
 
   @override
   void dispose() {
@@ -20,3 +25,4 @@ class AvatarProvider extends ChangeNotifier {
     nameController.dispose();
   }
 }
+

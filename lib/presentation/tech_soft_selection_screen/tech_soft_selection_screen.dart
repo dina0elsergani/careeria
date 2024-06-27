@@ -1,7 +1,7 @@
 import 'package:careeria/widgets/custom_elevated_button.dart';
-import 'models/tech_soft_selection_model.dart';
 import 'package:flutter/material.dart';
 import 'package:careeria/core/app_export.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'provider/tech_soft_selection_provider.dart';
 
 class TechSoftSelectionScreen extends StatefulWidget {
@@ -92,7 +92,9 @@ class TechSoftSelectionScreenState extends State<TechSoftSelectionScreen> {
   }
 
   /// Navigates to the technicalTestScreen when the action is triggered.
-  onTapTechnical(BuildContext context) {
+  onTapTechnical(BuildContext context) async{
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isTechSelected', true);
     NavigatorService.pushNamed(
       AppRoutes.technicalTestScreen,
     );

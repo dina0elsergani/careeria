@@ -1,12 +1,16 @@
 import 'package:careeria/core/utils/validation_functions.dart';
+import 'package:careeria/main.dart';
 import 'package:careeria/widgets/custom_text_form_field.dart';
 import 'package:careeria/widgets/custom_elevated_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'models/login_model.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart' as fs;
 import 'package:flutter/material.dart';
 import 'package:careeria/core/app_export.dart';
 import 'provider/login_provider.dart';
 import 'package:careeria/domain/googleauth/google_auth_helper.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -23,6 +27,44 @@ class LoginScreen extends StatefulWidget {
 // ignore_for_file: must_be_immutable
 class LoginScreenState extends State<LoginScreen> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  Future<void> login(String email, String password, BuildContext context) async {
+    final url = Uri.parse('${apiUrl}/api/v1/auth/login');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8', 'Accept': 'application/json',
+        },
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+        }),
+      );
+
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200 ) {
+        print('Login successful: ${responseData['message']}');
+        isLoggedIn = true;
+        userName = responseData['userName']??''; // Set user's name from the response
+        userEmail = email;
+        userId = responseData['userId'].toString(); 
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', isLoggedIn);
+        await prefs.setString('userEmail', userEmail!);
+        await prefs.setString('userName', userName!);
+        await prefs.setString('userId', userId!);
+        NavigatorService.pushNamed(
+          AppRoutes.androidLargeTwentythreeContainerScreen,
+        );
+      } else {
+        print('Failed to login: Status code: ${response.statusCode}, Response: ${response.body}');
+      }
+    } catch (e) {
+      print('Error occurred during login: $e');
+    }
+  }
 
   @override
   void initState() {
@@ -135,13 +177,6 @@ class LoginScreenState extends State<LoginScreen> {
               hintText: "lbl_password".tr,
               textInputAction: TextInputAction.done,
               textInputType: TextInputType.visiblePassword,
-              validator: (value) {
-                if (value == null ||
-                    (!isValidPassword(value, isRequired: true))) {
-                  return "err_msg_please_enter_valid_password".tr;
-                }
-                return null;
-              },
               obscureText: true,
               contentPadding:
                   EdgeInsets.symmetric(horizontal: 19.h, vertical: 18.v),
@@ -204,15 +239,19 @@ class LoginScreenState extends State<LoginScreen> {
 
   /// Navigates to the androidLargeTwentythreeContainerScreen when the action is triggered.
   onTapLogin(BuildContext context) {
-    NavigatorService.pushNamed(
-      AppRoutes.androidLargeTwentythreeContainerScreen,
-    );
+      if (_formKey.currentState!.validate()) {
+      final provider = Provider.of<LoginProvider>(context, listen: false); // Access provider
+        login(
+          provider.emailController.text,
+          provider.passwordController.text,
+          context
+        );
+      }
   }
 
   onTapContinueWithGoogle(BuildContext context) async {
     await GoogleAuthHelper().googleSignInProcess().then((googleUser) {
       if (googleUser != null) {
-        //TODO Actions to be performed after signin
       } else {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('user data is empty')));

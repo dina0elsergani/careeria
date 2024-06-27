@@ -49,7 +49,7 @@ final Map<String, String> enUs = {
   "msg_you_are_a_beginner": "You are a beginner",
 
   // Android Large - Eight Screen
-  "msg_you_are_experienced": "You are Experienced  ",
+  "msg_you_are_experienced": "You are intermediate",
 
   // Android Large - Nine Screen
   "msg_you_are_advanced": "You are Advanced  ",
@@ -90,7 +90,7 @@ final Map<String, String> enUs = {
 
   // student_home_screen Screen
   "lbl_latest_news": "Latest News",
-  "lbl_recently_videos": "Recently videos",
+  "lbl_recently_videos": "Recent videos",
   "lbl_ui_ux_design2": "UI/UX Design",
   "msg_garage_struggle":
       "garage struggle officer king arrange same maybe recent fold fun product city hand ambitious servant important propose horizontal raise",
@@ -181,7 +181,7 @@ final Map<String, String> enUs = {
   "lbl_mohamed_hesham": "Mohamed Hesham",
   "lbl_next": "Next",
   "lbl_password": "Password",
-  "lbl_rood_map": "Rood map",
+  "lbl_rood_map": "Road map",
   "lbl_sign_up": "Sign Up",
   "lbl_skip": "Skip",
   "lbl_start": "Start",

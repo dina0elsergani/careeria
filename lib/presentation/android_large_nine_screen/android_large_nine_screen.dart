@@ -73,6 +73,7 @@ class AndroidLargeNineScreenState extends State<AndroidLargeNineScreen> {
               ),
               SizedBox(height: 96.v),
               CustomElevatedButton(
+                onPressed: onTap,
                 height: 46.v,
                 width: 224.h,
                 text: "lbl_rood_map".tr,
@@ -83,6 +84,11 @@ class AndroidLargeNineScreenState extends State<AndroidLargeNineScreen> {
           ),
         ),
       ),
+    );
+  }
+    void onTap () {
+    NavigatorService.pushNamed(
+      AppRoutes.androidLargeTwentythreeContainerScreen,
     );
   }
 }

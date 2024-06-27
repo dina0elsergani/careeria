@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:careeria/widgets/custom_elevated_button.dart';
 import 'models/android_large_eight_model.dart';
 import 'package:flutter/material.dart';
@@ -71,6 +73,7 @@ class AndroidLargeEightScreenState extends State<AndroidLargeEightScreen> {
               ),
               SizedBox(height: 96.v),
               CustomElevatedButton(
+                onPressed:onTap  ,
                 height: 46.v,
                 width: 224.h,
                 text: "lbl_rood_map".tr,
@@ -81,6 +84,11 @@ class AndroidLargeEightScreenState extends State<AndroidLargeEightScreen> {
           ),
         ),
       ),
+    );
+  }
+    void onTap () {
+    NavigatorService.pushNamed(
+      AppRoutes.androidLargeTwentythreeContainerScreen,
     );
   }
 }

@@ -107,7 +107,6 @@ class AppRoutes {
         androidLargeEightScreen: AndroidLargeEightScreen.builder,
         androidLargeNineScreen: AndroidLargeNineScreen.builder,
         courseViewScreen: CourseViewScreen.builder,
-        courseVideosScreen: CourseVideosScreen.builder,
         androidLargeTwentythreeContainerScreen:
             AndroidLargeTwentythreeContainerScreen.builder,
         studentProfileScreen: StudentProfileScreen.builder,

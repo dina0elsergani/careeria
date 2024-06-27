@@ -8,7 +8,7 @@ class AndroidlargetwentyfiveItemWidget extends StatelessWidget {
     this.androidlargetwentyfiveItemModelObj, {
     Key? key,
     this.onTapImgUiUxdesign,
-    this.onTapTxtMohamedHesham,
+    this.onTapTxtmohamedHesham,
   }) : super(
           key: key,
         );
@@ -17,7 +17,7 @@ class AndroidlargetwentyfiveItemWidget extends StatelessWidget {
 
   VoidCallback? onTapImgUiUxdesign;
 
-  VoidCallback? onTapTxtMohamedHesham;
+  VoidCallback? onTapTxtmohamedHesham;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class AndroidlargetwentyfiveItemWidget extends StatelessWidget {
               SizedBox(height: 6.v),
               GestureDetector(
                 onTap: () {
-                  onTapTxtMohamedHesham!.call();
+                  onTapTxtmohamedHesham!.call();
                 },
                 child: Text(
                   androidlargetwentyfiveItemModelObj.mohamedHesham!,

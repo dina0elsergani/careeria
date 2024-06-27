@@ -1,11 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'core/app_export.dart';
 
 var globalMessengerKey = GlobalKey<ScaffoldMessengerState>();
-void main() {
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isAndroid) {
+    AndroidInAppWebViewController.setWebContentsDebuggingEnabled(true);
+  }
   Future.wait([
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -14,8 +21,31 @@ void main() {
   ]).then((value) {
     runApp(MyApp());
   });
+  await initializePreferences();
 }
+String apiUrl='http://192.168.1.7:8000';
+String? selectedOption;
+bool isLoggedIn = false;
+String? userName;
+String? userId;
+String? userEmail;
+String? userAvatar;
+String? userPhone;
+String? userTrack;
+bool? isTechSelected=false;
 
+Future<void> initializePreferences() async {
+  final prefs = await SharedPreferences.getInstance();
+  isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+  userEmail = prefs.getString('userEmail');
+  userName = prefs.getString('userName');
+  selectedOption = prefs.getString('selectedOption');
+  userAvatar = prefs.getString('userAvatar');
+  userPhone = prefs.getString('userPhone');
+  userId = prefs.getString('userId');
+  userTrack = prefs.getString('userTrack');
+  isTechSelected = prefs.getBool('isTechSelected');
+}
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -42,7 +72,7 @@ class MyApp extends StatelessWidget {
                     '',
                   ),
                 ],
-                initialRoute: AppRoutes.softTestScreen,
+                initialRoute:isLoggedIn?AppRoutes.androidLargeTwentythreeContainerScreen: AppRoutes.loginScreen,
                 routes: AppRoutes.routes,
               );
             },
